@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="30">
+    <title>我是陈</title>
+</head>
+<body background="maijiangjun.jpg">
+    <!--background属性是设置背景图片  background="maijiangjun.jpg"-->
+    <h1>aaa11</h1>
+    <p>bbb22</p>
+    <a href="https://www.baidu.com">百度</a>
+    <img src="https://www.baidu.com/img/bd_logo1.png" alt="百度logo">
+    <!--alt属性是图片的文字说明，当图片无法显示时，显示alt属性中的文字-->
+    <br>
+    <b>111</b>   <strong>222</strong>
+    <i>222</i>   <em>333</em>
+    <u>333</u>
+    <sub>444</sub>
+    <sup>555</sup>
+    <del>666</del>
+    <code>777</code>
+    <a href="https://www.baidu.com" target="_parent">百度</a>  
+    <!--target="_blank"属性是打开链接到新页面-->
+    <!--target="parent"属性是打开链接到父页面-->
+    <a id="text"><h1>我有用哦</h1></a>
+    <a href="#text">回到顶部</a>
+    <button onclick="alert('你好')">点我</button>
+    <a href="p.html" target="_blank"><button>点我</button></a>
+    <iframe src="p.html" width="500" height="500" ></iframe>
+    <!--iframe标签用于在当前页面显示另一个页面的内容-->
+    <!--frameborder属性设置边框，0表示无边框，1表示有边框-->
+</body>
+<style>
+    body{ 
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: right;
+        width:"20px" ;
+        height:"20px";
+    }
+    button {
+        width: 200px;
+        height:150px;
+        background-size: contain;
+        background-image: url('maijiangjun2.jpg'); 
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    @keyframes scroll{
+        0%{
+            background-position: 0 0;
+        }
+        100%{
+            background-position: 100% 0;
+        }
+    }
+</style>
+</html>
