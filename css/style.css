@@ -177,6 +177,10 @@
             left: 100%;
         }
 
+        .tiktok-duo {
+            text-shadow: 1.2px 0 #25f4ee, -1.2px 0 #fe2c55;
+        }
+
         /* 状态指示器 */
         .status-dot {
             width: 8px;
