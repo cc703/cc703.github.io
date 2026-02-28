@@ -936,7 +936,7 @@
         async function prefetchFrontmatters(articles) {
             await Promise.allSettled(articles.map(async article => {
                 try {
-                    const res = await fetch(article.path);
+                    const res = await fetch(article.download_url || article.path);
                     if (!res.ok) return;
                     const raw = await res.text();
                     const { meta } = parseFrontmatter(raw);
@@ -963,7 +963,7 @@
             showArticleLoading(`正在打开 ${article.name}...`);
 
             try {
-                const res = await fetch(article.path);
+                const res = await fetch(article.download_url || article.path);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const raw = await res.text();
 
