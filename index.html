@@ -4,11 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visual Studio Code - AI Portfolio</title>
+    <title>CCCC-Blog</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <!-- 引入 Markdown 解析器和代码高亮 -->
     <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/vs2015.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
@@ -16,8 +15,6 @@
 </head>
 
 <body>
-
-    <!-- 标题栏 -->
     <div class="h-8 bg-[#3c3c3c] flex justify-between items-center px-4 text-xs border-b border-[#2b2b2b] z-50">
         <div class="flex gap-4 items-center">
             <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg"
@@ -26,7 +23,7 @@
                 <span>文件</span><span>编辑</span><span>帮助</span>
             </div>
         </div>
-        <div class="opacity-40">AI_Studio - Visual Studio Code</div>
+        <div class="opacity-40">CCCC-Blog - Visual Studio BLOG</div>
         <div class="flex gap-4 opacity-70"><i class="fas fa-minus"></i><i class="fas fa-times"></i></div>
     </div>
 
@@ -42,7 +39,6 @@
                 <div class="activity-icon opacity-30"><i class="fas fa-cog"></i></div>
             </div>
         </div>
-
         <!-- 侧边栏 -->
         <div class="sidebar">
             <div class="p-3 text-[11px] font-bold uppercase opacity-50 flex justify-between">
@@ -51,7 +47,7 @@
             </div>
             <div class="px-2 py-1 flex items-center gap-1 bg-white/5 text-[11px] font-bold">
                 <i class="fas fa-chevron-down text-[10px]"></i>
-                <span id="project-name">PROJECT_AI_CORE</span>
+                <span id="project-name">Main</span>
             </div>
             <div id="sidebar-content" class="flex-1 overflow-y-auto pt-1"></div>
         </div>
@@ -64,7 +60,6 @@
                     <span id="tab-name">Dashboard</span>
                 </div>
             </div>
-
             <!-- 1. 仪表盘 -->
             <div id="view-dashboard" class="view-content active p-16">
                 <div class="bg-grid"></div>
@@ -73,9 +68,11 @@
                         <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Felix"
                             class="w-32 h-32 rounded-full border-2 border-white/10 p-1">
                         <div>
-                            <h1 class="text-4xl font-bold text-white">你好, 我是 <span class="text-blue-500"
-                                    id="typewriter"></span></h1>
-                            <p class="text-gray-400 mt-2">正在探索通往 AGI 的道路 | 深度学习开发者</p>
+                            <h1 class="text-4xl font-bold text-white">你好, 我是 
+                                <span class="text-blue-500"
+                                    id="typewriter"> ai 爱好者</span>
+                            </h1>
+                            <p class="text-gray-400 mt-2">AI辅助全栈设计 || 深度学习初学者 </p>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-6">
@@ -83,15 +80,15 @@
                             <h3 class="text-xs font-bold opacity-50 uppercase mb-4">技术能力</h3>
                             <div class="space-y-4">
                                 <div>
-                                    <div class="flex justify-between text-xs mb-1"><span>PyTorch</span><span>90%</span>
+                                    <div class="flex justify-between text-xs mb-1"><span>Python</span><span>50%</span>
                                     </div>
                                     <div class="h-1 bg-white/5">
                                         <div class="h-full bg-blue-500" style="width: 90%"></div>
                                     </div>
                                 </div>
                                 <div>
-                                    <div class="flex justify-between text-xs mb-1"><span>NLP /
-                                            LLM</span><span>85%</span></div>
+                                    <div class="flex justify-between text-xs mb-1"><span>js /
+                                            vue</span><span>50%</span></div>
                                     <div class="h-1 bg-white/5">
                                         <div class="h-full bg-blue-500" style="width: 85%"></div>
                                     </div>
@@ -101,8 +98,8 @@
                         <div class="glass-card">
                             <h3 class="text-xs font-bold opacity-50 uppercase mb-4">当前状态</h3>
                             <div class="text-sm space-y-2 text-gray-300">
-                                <p><span class="status-dot"></span> 正在复现 Sora 核心架构</p>
-                                <p><i class="fas fa-book mr-2"></i> 正在阅读《统计学习方法》</p>
+                                <p><span class="status-dot"></span> ai工具--vibe coding</p>
+                                <p><i class="fas fa-book mr-2"></i> GDUT 学子</p>
                             </div>
                         </div>
                     </div>
@@ -116,30 +113,31 @@
                     <div class="flex justify-between items-end mb-10">
                         <div>
                             <h2 class="text-3xl font-bold text-white mb-2">Connect with Me</h2>
-                            <p class="text-gray-500 font-mono text-sm">Location: <span class="text-blue-400">Beijing,
+                            <p class="text-gray-500 font-mono text-sm">Location: <span class="text-blue-400">GuangDong,
                                     China</span> | UTC+8</p>
                         </div>
                         <div class="text-right font-mono text-xs opacity-40">
-                            Version: 2.0.4-stable<br>
-                            Last Updated: 2024-Q3
+                            Version:1.0.0<br>
+                            Last Updated: 2026-02
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- GitHub -->
-                        <div class="social-tile" onclick="window.open('https://github.com')">
+                        <div class="social-tile" onclick="window.open('https://github.com//cc703')">
                             <div class="flex justify-between items-start">
                                 <i class="fab fa-github text-3xl"></i>
                                 <span class="text-[10px] bg-white/10 px-2 py-0.5 rounded uppercase">Public</span>
                             </div>
                             <div>
-                                <div class="text-white font-bold">GitHub Repository</div>
+                                <div class="text-white font-bold">GitHub仓库</div>
                                 <div class="text-gray-500 text-xs">查看我的开源项目与代码提交</div>
+                                <div class="text-gray-500 text-xs">欢迎交流</div>
                             </div>
                         </div>
 
                         <!-- WeChat -->
-                        <div class="social-tile" onclick="copyToClipboard('AI_Student_01', '微信 ID 已复制')">
+                        <div class="social-tile" onclick="copyToClipboard('Reaooy_', '微信 ID 已复制')">
                             <div class="flex justify-between items-start">
                                 <i class="fab fa-weixin text-3xl text-green-500"></i>
                                 <span
@@ -147,7 +145,7 @@
                             </div>
                             <div>
                                 <div class="text-white font-bold">WeChat / 微信</div>
-                                <div class="text-gray-500 text-xs">AI_Student_01 (点击复制)</div>
+                                <div class="text-gray-500 text-xs">Reaooy_(点击复制)</div>
                             </div>
                         </div>
 
@@ -163,25 +161,24 @@
                                 <div class="text-gray-500 text-xs">work@ai-lab.com (点击发送)</div>
                             </div>
                         </div>
-
-                        <!-- X / Twitter -->
-                        <div class="social-tile" onclick="window.open('https://twitter.com')">
+                        
+                        <!--dou yin-->
+                        <div class="social-tile" onclick="window.open('https://www.douyin.com/user/self')">
                             <div class="flex justify-between items-start">
                                 <i class="fab fa-twitter text-3xl text-blue-400"></i>
                                 <span
                                     class="text-[10px] bg-blue-400/20 text-blue-400 px-2 py-0.5 rounded uppercase">Social</span>
                             </div>
                             <div>
-                                <div class="text-white font-bold">X / Twitter</div>
-                                <div class="text-gray-500 text-xs">关注获取最新技术动态</div>
+                                <div class="text-white font-bold">抖音</div>
+                                <div class="text-gray-500 text-xs">发布日常</div>
                             </div>
                         </div>
                     </div>
-
                     <!-- 装饰性的状态卡片 -->
                     <div class="mt-6 glass-card border-none bg-blue-500/5 flex items-center justify-between py-4">
                         <div class="flex items-center gap-4 px-2 text-xs">
-                            <span class="opacity-50">API STATUS</span>
+                            <span class="opacity-50">STATUS</span>
                             <span class="text-green-400 font-bold"><i class="fas fa-circle text-[8px] mr-1"></i>
                                 OPERATIONAL</span>
                         </div>
