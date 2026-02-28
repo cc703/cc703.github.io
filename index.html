@@ -1,0 +1,1097 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Studio Code - AI Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --vscode-bg: #1e1e1e;
+            --vscode-sidebar: #252526;
+            --vscode-activitybar: #333333;
+            --vscode-accent: #007acc;
+            --vscode-text: #cccccc;
+            --vscode-border: #2b2b2b;
+            --card-bg: rgba(37, 37, 38, 0.7);
+        }
+
+        body {
+            background-color: var(--vscode-bg);
+            color: var(--vscode-text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+        }
+
+        /* 背景装饰 */
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(#333 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* 活动栏 */
+        .activity-bar {
+            background-color: var(--vscode-activitybar);
+            width: 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .activity-icon {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .activity-icon:hover {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .activity-icon.active {
+            color: white;
+            border-left: 2px solid white;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            background-color: var(--vscode-sidebar);
+            width: 260px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--vscode-border);
+            z-index: 40;
+        }
+
+        .sidebar-item {
+            padding: 4px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #cccccc;
+        }
+
+        .sidebar-item:hover {
+            background-color: #2a2d2e;
+        }
+
+        /* 编辑器 */
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--vscode-bg);
+            position: relative;
+        }
+
+        .tab-bar {
+            background-color: var(--vscode-sidebar);
+            height: 35px;
+            display: flex;
+        }
+
+        .tab {
+            background-color: #2d2d2d;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            border-right: 1px solid #1e1e1e;
+            cursor: pointer;
+            color: #969696;
+            height: 100%;
+        }
+
+        .tab.active {
+            background-color: var(--vscode-bg);
+            color: white;
+            border-top: 1px solid var(--vscode-accent);
+        }
+
+        .view-content {
+            flex: 1;
+            overflow-y: auto;
+            display: none;
+            position: relative;
+        }
+
+        .view-content.active {
+            display: block;
+        }
+
+        /* 高级名片卡片样式 */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .social-tile {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-tile:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: var(--vscode-accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .social-tile::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: 0.5s;
+        }
+
+        .social-tile:hover::after {
+            left: 100%;
+        }
+
+        /* 状态指示器 */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4caf50;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px #4caf50;
+            margin-right: 6px;
+        }
+
+        /* 成功提示 */
+        .copy-toast {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--vscode-accent);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            z-index: 1000;
+        }
+
+        .copy-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* 代码行号 */
+        .line {
+            display: flex;
+            line-height: 1.6;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+        }
+
+        .line-num {
+            color: #858585;
+            min-width: 40px;
+            text-align: right;
+            margin-right: 20px;
+        }
+
+        .status-bar {
+            background-color: var(--vscode-accent);
+            height: 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12px;
+            font-size: 12px;
+            color: white;
+        }
+
+        /* Markdown 样式 */
+        .markdown-body {
+            color: var(--vscode-text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            line-height: 1.6;
+            font-size: 15px;
+            padding-bottom: 50px;
+        }
+
+        .markdown-body h1 {
+            font-size: 2em;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .markdown-body h2 {
+            font-size: 1.5em;
+            font-weight: 500;
+            color: #fff;
+            margin-top: 30px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 6px;
+        }
+
+        .markdown-body h3 {
+            font-size: 1.25em;
+            font-weight: 500;
+            color: #fff;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        .markdown-body p {
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        .markdown-body a {
+            color: #3794ff;
+            text-decoration: none;
+        }
+
+        .markdown-body a:hover {
+            text-decoration: underline;
+        }
+
+        .markdown-body pre {
+            background-color: #1e1e1e !important;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 16px;
+            overflow: auto;
+            margin-bottom: 16px;
+        }
+
+        .markdown-body code {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 90%;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 5px;
+            border-radius: 4px;
+            color: #dcdcaa;
+        }
+
+        .markdown-body pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .markdown-body blockquote {
+            border-left: 4px solid var(--vscode-accent);
+            padding: 0 1em;
+            color: #8b949e;
+            margin: 0 0 16px 0;
+        }
+
+        .markdown-body ul,
+        .markdown-body ol {
+            padding-left: 2em;
+            margin-bottom: 16px;
+        }
+
+        .markdown-body li+li {
+            margin-top: 4px;
+        }
+
+        .markdown-body img {
+            max-width: 100%;
+            box-sizing: border-box;
+            border-radius: 6px;
+            border: 1px solid #333;
+        }
+
+        .markdown-body hr {
+            height: 1px;
+            border: none;
+            background-color: #333;
+            margin: 24px 0;
+        }
+
+        /* 文章视图专属布局 */
+        #view-article.active {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .article-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* 面包屑导航栏 */
+        .article-breadcrumb {
+            background-color: var(--vscode-bg);
+            border-bottom: 1px solid var(--vscode-border);
+            padding: 5px 20px;
+            font-size: 12px;
+            color: #888;
+            font-family: 'Consolas', monospace;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .bc-dim {
+            color: #555;
+        }
+
+        .bc-sep {
+            color: #444;
+        }
+
+        .bc-file {
+            color: #cccccc;
+        }
+
+        .bc-tags {
+            display: flex;
+            gap: 5px;
+            margin-left: auto;
+        }
+
+        .bc-tag {
+            background: rgba(0, 122, 204, 0.2);
+            color: #5ba9e0;
+            border: 1px solid rgba(0, 122, 204, 0.35);
+            padding: 1px 7px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+
+        /* 博客侧边栏文章条目 */
+        .blog-item {
+            padding: 8px 12px 8px 16px;
+            cursor: pointer;
+            border-left: 2px solid transparent;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .blog-item:hover {
+            background-color: #2a2d2e;
+        }
+
+        .blog-item.active {
+            background-color: rgba(0, 122, 204, 0.12);
+            border-left-color: var(--vscode-accent);
+        }
+
+        .blog-item-inner {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .blog-item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 0;
+        }
+
+        .blog-item-name {
+            font-size: 13px;
+            color: #cccccc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .blog-item.active .blog-item-name {
+            color: #fff;
+        }
+
+        .blog-item-date {
+            font-size: 11px;
+            color: #555;
+            font-family: 'Consolas', monospace;
+        }
+
+        /* 加载动效 */
+        .article-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 60vh;
+        }
+
+        .loading-terminal {
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            color: #6a9955;
+        }
+
+        .loading-caret {
+            color: var(--vscode-accent);
+            margin-right: 8px;
+        }
+
+        .loading-cursor {
+            display: inline-block;
+            animation: blink 1s step-end infinite;
+            color: var(--vscode-text);
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* 错误状态 */
+        .article-error {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 60vh;
+            color: #888;
+            gap: 12px;
+            font-family: 'Consolas', monospace;
+            font-size: 13px;
+        }
+
+        /* 文章淡入动效 */
+        .fade-in {
+            animation: articleFadeIn 0.3s ease-out forwards;
+        }
+
+        @keyframes articleFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 侧边栏文章数量徽章 */
+        .sidebar-badge {
+            background: rgba(0, 122, 204, 0.5);
+            color: #fff;
+            font-size: 10px;
+            padding: 1px 6px;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+
+        /* markdown 表格样式 */
+        .markdown-body table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .markdown-body th,
+        .markdown-body td {
+            border: 1px solid #383838;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .markdown-body th {
+            background-color: #2d2d2d;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .markdown-body tr:nth-child(even) td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+    </style>
+    <!-- 引入 Markdown 解析器和代码高亮 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/vs2015.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+
+</head>
+
+<body>
+
+    <!-- 标题栏 -->
+    <div class="h-8 bg-[#3c3c3c] flex justify-between items-center px-4 text-xs border-b border-[#2b2b2b] z-50">
+        <div class="flex gap-4 items-center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg"
+                class="w-4 h-4">
+            <div class="flex gap-3 opacity-80">
+                <span>文件</span><span>编辑</span><span>帮助</span>
+            </div>
+        </div>
+        <div class="opacity-40">AI_Studio - Visual Studio Code</div>
+        <div class="flex gap-4 opacity-70"><i class="fas fa-minus"></i><i class="fas fa-times"></i></div>
+    </div>
+
+    <div class="flex flex-1 overflow-hidden">
+        <!-- 活动栏 -->
+        <div class="activity-bar">
+            <div onclick="switchModule('home')" id="btn-home" class="activity-icon active"><i class="fas fa-copy"></i>
+            </div>
+            <div onclick="switchModule('blog')" id="btn-blog" class="activity-icon"><i class="fas fa-edit"></i></div>
+            <div class="mt-auto">
+                <div onclick="switchModule('contact')" id="btn-contact" class="activity-icon"><i
+                        class="fas fa-user-circle"></i></div>
+                <div class="activity-icon opacity-30"><i class="fas fa-cog"></i></div>
+            </div>
+        </div>
+
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="p-3 text-[11px] font-bold uppercase opacity-50 flex justify-between">
+                <span id="sidebar-title">资源管理器</span>
+                <i class="fas fa-ellipsis-h"></i>
+            </div>
+            <div class="px-2 py-1 flex items-center gap-1 bg-white/5 text-[11px] font-bold">
+                <i class="fas fa-chevron-down text-[10px]"></i>
+                <span id="project-name">PROJECT_AI_CORE</span>
+            </div>
+            <div id="sidebar-content" class="flex-1 overflow-y-auto pt-1"></div>
+        </div>
+
+        <!-- 编辑器区域 -->
+        <div class="editor-container">
+            <div class="tab-bar" id="tabs">
+                <div class="tab active" id="current-tab">
+                    <i class="fas fa-tachometer-alt text-blue-400"></i>
+                    <span id="tab-name">Dashboard</span>
+                </div>
+            </div>
+
+            <!-- 1. 仪表盘 -->
+            <div id="view-dashboard" class="view-content active p-16">
+                <div class="bg-grid"></div>
+                <div class="max-w-4xl mx-auto relative">
+                    <div class="flex items-center gap-8 mb-12">
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Felix"
+                            class="w-32 h-32 rounded-full border-2 border-white/10 p-1">
+                        <div>
+                            <h1 class="text-4xl font-bold text-white">你好, 我是 <span class="text-blue-500"
+                                    id="typewriter"></span></h1>
+                            <p class="text-gray-400 mt-2">正在探索通往 AGI 的道路 | 深度学习开发者</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="glass-card">
+                            <h3 class="text-xs font-bold opacity-50 uppercase mb-4">技术能力</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span>PyTorch</span><span>90%</span>
+                                    </div>
+                                    <div class="h-1 bg-white/5">
+                                        <div class="h-full bg-blue-500" style="width: 90%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span>NLP /
+                                            LLM</span><span>85%</span></div>
+                                    <div class="h-1 bg-white/5">
+                                        <div class="h-full bg-blue-500" style="width: 85%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-card">
+                            <h3 class="text-xs font-bold opacity-50 uppercase mb-4">当前状态</h3>
+                            <div class="text-sm space-y-2 text-gray-300">
+                                <p><span class="status-dot"></span> 正在复现 Sora 核心架构</p>
+                                <p><i class="fas fa-book mr-2"></i> 正在阅读《统计学习方法》</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 高级联系人名片渲染 -->
+            <div id="view-contact" class="view-content p-12">
+                <div class="bg-grid"></div>
+                <div class="max-w-4xl mx-auto relative">
+                    <div class="flex justify-between items-end mb-10">
+                        <div>
+                            <h2 class="text-3xl font-bold text-white mb-2">Connect with Me</h2>
+                            <p class="text-gray-500 font-mono text-sm">Location: <span class="text-blue-400">Beijing,
+                                    China</span> | UTC+8</p>
+                        </div>
+                        <div class="text-right font-mono text-xs opacity-40">
+                            Version: 2.0.4-stable<br>
+                            Last Updated: 2024-Q3
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- GitHub -->
+                        <div class="social-tile" onclick="window.open('https://github.com')">
+                            <div class="flex justify-between items-start">
+                                <i class="fab fa-github text-3xl"></i>
+                                <span class="text-[10px] bg-white/10 px-2 py-0.5 rounded uppercase">Public</span>
+                            </div>
+                            <div>
+                                <div class="text-white font-bold">GitHub Repository</div>
+                                <div class="text-gray-500 text-xs">查看我的开源项目与代码提交</div>
+                            </div>
+                        </div>
+
+                        <!-- WeChat -->
+                        <div class="social-tile" onclick="copyToClipboard('AI_Student_01', '微信 ID 已复制')">
+                            <div class="flex justify-between items-start">
+                                <i class="fab fa-weixin text-3xl text-green-500"></i>
+                                <span
+                                    class="text-[10px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded uppercase">Personal</span>
+                            </div>
+                            <div>
+                                <div class="text-white font-bold">WeChat / 微信</div>
+                                <div class="text-gray-500 text-xs">AI_Student_01 (点击复制)</div>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="social-tile" onclick="copyToClipboard('work@ai-lab.com', '邮件地址已复制')">
+                            <div class="flex justify-between items-start">
+                                <i class="fas fa-envelope text-3xl text-red-400"></i>
+                                <span
+                                    class="text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded uppercase">Work</span>
+                            </div>
+                            <div>
+                                <div class="text-white font-bold">Email / 电子邮件</div>
+                                <div class="text-gray-500 text-xs">work@ai-lab.com (点击发送)</div>
+                            </div>
+                        </div>
+
+                        <!-- X / Twitter -->
+                        <div class="social-tile" onclick="window.open('https://twitter.com')">
+                            <div class="flex justify-between items-start">
+                                <i class="fab fa-twitter text-3xl text-blue-400"></i>
+                                <span
+                                    class="text-[10px] bg-blue-400/20 text-blue-400 px-2 py-0.5 rounded uppercase">Social</span>
+                            </div>
+                            <div>
+                                <div class="text-white font-bold">X / Twitter</div>
+                                <div class="text-gray-500 text-xs">关注获取最新技术动态</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 装饰性的状态卡片 -->
+                    <div class="mt-6 glass-card border-none bg-blue-500/5 flex items-center justify-between py-4">
+                        <div class="flex items-center gap-4 px-2 text-xs">
+                            <span class="opacity-50">API STATUS</span>
+                            <span class="text-green-400 font-bold"><i class="fas fa-circle text-[8px] mr-1"></i>
+                                OPERATIONAL</span>
+                        </div>
+                        <div class="flex items-center gap-4 px-2 text-xs">
+                            <span class="opacity-50">AVAILABILITY</span>
+                            <span class="text-orange-400 font-bold">HIRING / COLLAB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-code" class="view-content code-area p-8"></div>
+
+            <!-- 文章视图：面包屑 + 滚动阅读区 -->
+            <div id="view-article" class="view-content">
+                <div id="article-breadcrumb" class="article-breadcrumb" style="display:none;"></div>
+                <div id="article-scroll-area" class="article-scroll-area">
+                    <div id="article-content" class="p-16 max-w-4xl mx-auto"></div>
+                </div>
+            </div>
+
+            <!-- 复制成功提示 -->
+            <div id="copy-toast" class="copy-toast">复制成功</div>
+        </div>
+    </div>
+
+    <!-- 底部状态栏 -->
+    <div class="status-bar">
+        <div class="flex gap-4 items-center h-full">
+            <span class="hover:bg-black/10 px-2 cursor-pointer h-full flex items-center gap-1"><i
+                    class="fas fa-code-branch text-[10px]"></i> main*</span>
+            <span class="hover:bg-black/10 px-2 h-full flex items-center gap-2"><i
+                    class="fas fa-sync fa-spin text-[10px]"></i> Syncing...</span>
+        </div>
+        <div class="flex gap-4 items-center h-full">
+            <span id="status-reading-time" class="px-2 opacity-60"></span>
+            <span id="status-mode" class="px-2">Dashboard</span>
+            <span class="bg-[#1f8ad2] px-3 h-full flex items-center"><i class="fas fa-bell"></i></span>
+        </div>
+    </div>
+
+    <script>
+        // ── Marked.js 配置：使用 custom renderer 进行代码高亮 ──────────
+        const renderer = new marked.Renderer();
+        renderer.code = function (code, language) {
+            const lang = hljs.getLanguage(language) ? language : 'plaintext';
+            const highlighted = hljs.highlight(code, { language: lang }).value;
+            return `<pre><code class="hljs language-${lang}">${highlighted}</code></pre>`;
+        };
+        marked.setOptions({ renderer, breaks: true });
+
+        const data = {
+            home: {
+                project: 'PROJECT_AI_CORE',
+                files: [
+                    { name: 'Dashboard', icon: 'fas fa-tachometer-alt text-blue-400', type: 'dashboard' },
+                    { name: 'README.md', icon: 'fas fa-info-circle text-blue-400', type: 'code' }
+                ],
+                content: { readme: `1| <span style="color:#6a9955"># 项目介绍</span>\n2| \n3| <span style="color:#569cd6">const</span> <span style="color:#dcdcaa">AI_Core</span> = () => {\n4| &nbsp;&nbsp;<span style="color:#c586c0">return</span> <span style="color:#ce9178">"Powerful Engine"</span>;\n5| }` }
+            },
+            contact: {
+                project: 'CONTACT_CENTER',
+                files: [
+                    { name: 'Connect_Card', icon: 'fas fa-id-card text-orange-400', type: 'contact_view' },
+                    { name: 'credentials.json', icon: 'fas fa-lock text-yellow-500', type: 'code' }
+                ],
+                content: { 'credentials.json': `1| {\n2| &nbsp;&nbsp;<span style="color:#ce9178">"status"</span>: <span style="color:#ce9178">"active"</span>,\n3| &nbsp;&nbsp;<span style="color:#ce9178">"open_to_work"</span>: <span style="color:#569cd6">true</span>\n4| }` }
+            }
+        };
+        const BLOG_CONFIG = {
+            githubUser: 'cc703',
+            githubRepo: 'cc703.github.io',
+        };
+        function detectGitHubInfo() {
+            const host = location.hostname;
+            if (!host.endsWith('.github.io')) return null;
+            const user = host.replace('.github.io', '');
+            const parts = location.pathname.split('/').filter(Boolean);
+            const repo = parts.length > 0 ? parts[0] : `${user}.github.io`;
+            return { user, repo };
+        }
+        function parseFrontmatter(raw) {
+            const match = raw.match(/^---\s*\n([\s\S]*?)\n---\s*\n/);
+            if (!match) return { meta: {}, body: raw };
+            const meta = {};
+            match[1].split('\n').forEach(line => {
+                const colonIdx = line.indexOf(':');
+                if (colonIdx === -1) return;
+                const key = line.slice(0, colonIdx).trim();
+                const val = line.slice(colonIdx + 1).trim();
+                if (val.startsWith('[') && val.endsWith(']')) {
+                    meta[key] = val.slice(1, -1).split(',').map(v => v.trim()).filter(Boolean);
+                } else {
+                    meta[key] = val;
+                }
+            });
+            return { meta, body: raw.slice(match[0].length) };
+        }
+
+        // ── 模块切换入口 ─────────────────────────────────────────────────
+        async function switchModule(moduleId) {
+            document.querySelectorAll('.activity-icon').forEach(el => el.classList.remove('active'));
+            document.getElementById(`btn-${moduleId}`).classList.add('active');
+            document.getElementById('article-breadcrumb').style.display = 'none';
+            document.getElementById('status-reading-time').innerText = '';
+
+            if (moduleId === 'blog') {
+                await loadBlogModule();
+                return;
+            }
+            const mod = data[moduleId];
+            if (!mod) return;
+            buildSidebar(mod.files, moduleId);
+            render(mod.files[0], moduleId);
+        }
+
+        // ── 博客模块主入口：自动扫描，三级降级策略 ───────────────────────
+        // 优先级: GitHub Contents API → manifest.json → 错误提示
+        async function loadBlogModule() {
+            document.getElementById('project-name').innerText = 'MY_ARTICLES';
+            showArticleLoading('正在扫描 posts/ 目录...');
+
+            // ▶ 策略 1: GitHub Contents API 自动扫描
+            const autoInfo = detectGitHubInfo();
+            const cfgInfo  = (BLOG_CONFIG.githubUser && BLOG_CONFIG.githubRepo)
+                ? { user: BLOG_CONFIG.githubUser, repo: BLOG_CONFIG.githubRepo }
+                : null;
+            const ghInfo = autoInfo || cfgInfo;
+
+            if (ghInfo) {
+                const { user, repo } = ghInfo;
+                try {
+                    const apiUrl = `https://api.github.com/repos/${user}/${repo}/contents/posts`;
+                    const res = await fetch(apiUrl, {
+                        headers: { Accept: 'application/vnd.github.v3+json' }
+                    });
+                    if (res.ok) {
+                        const files = await res.json();
+                        const mdFiles = files
+                            .filter(f => f.type === 'file' && f.name.endsWith('.md'))
+                            .map(f => ({
+                                name: f.name,
+                                path: `posts/${f.name}`,
+                                download_url: f.download_url,
+                                date: '…',
+                                tags: []
+                            }));
+                        if (mdFiles.length > 0) {
+                            renderBlogSidebar(mdFiles, 'GitHub API');
+                            // 并行拉取所有文章的 frontmatter，渐进更新侧边栏日期
+                            prefetchFrontmatters(mdFiles);
+                            return;
+                        }
+                    }
+                } catch (e) { /* 降级 */ }
+            }
+
+            // ▶ 策略 2: 本地 manifest.json（Live Server 开发时使用）
+            try {
+                const res = await fetch('./posts/manifest.json');
+                if (!res.ok) throw new Error();
+                const manifest = await res.json();
+                renderBlogSidebar(manifest, 'manifest.json');
+            } catch (err) {
+                showArticleError(
+                    `无法自动扫描文章目录。<br>
+                    <small style="line-height:2">
+                      ① 如需本地预览，请安装 VS Code <b>Live Server</b> 插件并点击"Open with Live Server"。<br>
+                      ② 如已部署到 GitHub Pages，请在 <code>BLOG_CONFIG</code> 中填写 <code>githubUser</code> 与 <code>githubRepo</code>。
+                    </small>`
+                );
+            }
+        }
+
+        // ── 渲染侧边栏文章列表 ─────────────────────────────────────────────
+        function renderBlogSidebar(articles, source) {
+            const list = document.getElementById('sidebar-content');
+            list.innerHTML = `
+                <div class="px-3 py-2 flex justify-between items-center text-[11px] text-gray-500 border-b border-[#2b2b2b] mb-1">
+                    <span>POSTS</span>
+                    <span class="sidebar-badge" title="来源: ${source}">${articles.length}</span>
+                </div>`;
+
+            articles.forEach(article => {
+                const item = document.createElement('div');
+                item.className = 'blog-item';
+                item.dataset.name = article.name;
+                item.innerHTML = `
+                    <div class="blog-item-inner">
+                        <i class="fab fa-markdown text-blue-400 mt-0.5 shrink-0"></i>
+                        <div class="blog-item-info">
+                            <span class="blog-item-name">${article.name}</span>
+                            <span class="blog-item-date" id="date-${article.name}">${article.date || '…'}</span>
+                        </div>
+                    </div>`;
+                item.onclick = () => loadArticle(article, item);
+                list.appendChild(item);
+            });
+
+            // 打开第一篇
+            if (articles.length > 0) {
+                const firstItem = list.querySelector('.blog-item');
+                loadArticle(articles[0], firstItem);
+            }
+        }
+
+        // ── 并行预取所有文章的 frontmatter，渐进更新侧边栏日期 ────────────
+        async function prefetchFrontmatters(articles) {
+            await Promise.allSettled(articles.map(async article => {
+                try {
+                    const res = await fetch(article.path);
+                    if (!res.ok) return;
+                    const raw = await res.text();
+                    const { meta } = parseFrontmatter(raw);
+                    if (meta.date) {
+                        // 更新 article 对象
+                        article.date = meta.date;
+                        article.tags = meta.tags || [];
+                        // 更新侧边栏 DOM
+                        const el = document.getElementById(`date-${article.name}`);
+                        if (el) el.textContent = meta.date;
+                    }
+                } catch (e) { /* 忽略单篇失败 */ }
+            }));
+        }
+
+        // ── 加载并渲染某篇 Markdown 文章 ─────────────────────────────────
+        async function loadArticle(article, itemEl) {
+            document.querySelectorAll('.blog-item').forEach(el => el.classList.remove('active'));
+            if (itemEl) itemEl.classList.add('active');
+
+            document.getElementById('tab-name').innerText = article.name;
+            document.getElementById('status-mode').innerText = article.name;
+            document.getElementById('status-reading-time').innerText = '';
+            showArticleLoading(`正在打开 ${article.name}...`);
+
+            try {
+                const res = await fetch(article.path);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const raw = await res.text();
+
+                // 解析 frontmatter，分离元信息和正文
+                const { meta, body } = parseFrontmatter(raw);
+                const tags   = meta.tags  || article.tags  || [];
+                const date   = meta.date  || article.date  || '';
+
+                // 更新面包屑（含标签）
+                const breadcrumb = document.getElementById('article-breadcrumb');
+                breadcrumb.style.display = 'flex';
+                const tagsHtml = tags.map(t => `<span class="bc-tag">${t}</span>`).join('');
+                breadcrumb.innerHTML = `
+                    <span class="bc-dim">POSTS</span>
+                    <span class="bc-sep">›</span>
+                    <span class="bc-file"><i class="fab fa-markdown mr-1 text-blue-400"></i>${article.name}</span>
+                    ${date ? `<span class="bc-dim bc-sep">${date}</span>` : ''}
+                    <span class="bc-tags">${tagsHtml}</span>`;
+
+                document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
+                document.getElementById('view-article').classList.add('active');
+
+                const contentEl = document.getElementById('article-content');
+                contentEl.innerHTML = `<div class="markdown-body fade-in">${marked.parse(body)}</div>`;
+                contentEl.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+                document.getElementById('article-scroll-area').scrollTop = 0;
+
+                // 估算阅读时间
+                const wordCount = body.replace(/```[\s\S]*?```/g, '').trim().split(/\s+/).length;
+                const mins = Math.max(1, Math.ceil(wordCount / 200));
+                document.getElementById('status-reading-time').innerText = `阅读约 ${mins} 分钟`;
+
+            } catch (err) {
+                showArticleError(`无法加载 "${article.path}"<br><small>${err.message}</small>`);
+            }
+        }
+
+        // ── 加载中 / 错误占位 ──────────────────────────────────────────────
+        function showArticleLoading(msg) {
+            document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-article').classList.add('active');
+            document.getElementById('article-content').innerHTML = `
+                <div class="article-loading">
+                    <div class="loading-terminal">
+                        <span class="loading-caret">›</span>
+                        <span class="loading-text">${msg}</span>
+                        <span class="loading-cursor">_</span>
+                    </div>
+                </div>`;
+        }
+
+        function showArticleError(msg) {
+            document.getElementById('article-content').innerHTML = `
+                <div class="article-error">
+                    <i class="fas fa-exclamation-triangle text-yellow-500 text-2xl"></i>
+                    <p>${msg}</p>
+                </div>`;
+        }
+
+        // ── 非博客模块通用侧边栏 ──────────────────────────────────────────
+        function buildSidebar(files, moduleId) {
+            document.getElementById('project-name').innerText = data[moduleId].project;
+            const list = document.getElementById('sidebar-content');
+            list.innerHTML = '';
+            files.forEach(f => {
+                const item = document.createElement('div');
+                item.className = 'sidebar-item ml-4';
+                item.innerHTML = `<i class="${f.icon}"></i> ${f.name}`;
+                item.onclick = () => render(f, moduleId);
+                list.appendChild(item);
+            });
+        }
+
+        // ── 非博客模块的静态视图渲染 ──────────────────────────────────────
+        function render(file, mid) {
+            document.getElementById('tab-name').innerText = file.name;
+            document.getElementById('status-mode').innerText = file.name;
+            document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
+
+            if (file.type === 'dashboard') {
+                document.getElementById('view-dashboard').classList.add('active');
+            } else if (file.type === 'contact_view') {
+                document.getElementById('view-contact').classList.add('active');
+            } else if (file.type === 'code') {
+                document.getElementById('view-code').classList.add('active');
+                const raw = data[mid].content[file.name]
+                    || data[mid].content['readme']
+                    || data[mid].content['credentials.json'];
+                document.getElementById('view-code').innerHTML = raw.split('\n').map(l => {
+                    const [n, ...r] = l.split('|');
+                    return `<div class="line"><span class="line-num">${n}</span><span>${r.join('|')}</span></div>`;
+                }).join('');
+            } else {
+                document.getElementById('view-article').classList.add('active');
+                const rawMd = data[mid].content[file.name] || '# 内容为空';
+                document.getElementById('article-content').innerHTML = `<div class="markdown-body fade-in">${marked.parse(rawMd)}</div>`;
+            }
+        }
+
+        // ── 复制到剪贴板 ──────────────────────────────────────────────────
+        function copyToClipboard(text, msg) {
+            navigator.clipboard.writeText(text).catch(() => {
+                const el = document.createElement('textarea');
+                el.value = text;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+            });
+            const toast = document.getElementById('copy-toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // ── 打字机动效 ────────────────────────────────────────────────────
+        const text = "AI_STUDENT";
+        let idx = 0;
+        function typing() {
+            if (idx < text.length) {
+                document.getElementById("typewriter").innerHTML += text.charAt(idx);
+                idx++;
+                setTimeout(typing, 150);
+            }
+        }
+
+        window.onload = () => { switchModule('home'); typing(); };
+    </script>
+</body>
+
+</html>
