@@ -310,13 +310,13 @@
         }
 
         // ── 打字机动效 ────────────────────────────────────────────────────
-        const text = "AI_STUDENT";
+        const text = "CCC-H--MM";
         let idx = 0;
         function typing() {
             if (idx < text.length) {
                 document.getElementById("typewriter").innerHTML += text.charAt(idx);
                 idx++;
-                setTimeout(typing, 150);
+                setTimeout(typing, 200);
             }
         }
 
